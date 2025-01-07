@@ -3,13 +3,10 @@
 #include <string.h>
 
 
-//tirar variaveis globais
-#define MAX_EVENTS 100
-#define MAX_NAME_LENGTH 50
-#define MAX_USERNAME_LENGTH 20
-#define MAX_PASSWORD_LENGTH 20
 
-typedef struct {event
+typedef struct {
+    #define MAX_EVENTS 100
+    #define MAX_NAME_LENGTH 50
     char name[MAX_NAME_LENGTH];
     // Add more event details as needed 
     //data
@@ -17,6 +14,9 @@ typedef struct {event
 } Event;
 
 typedef struct {//nome da estrutura
+
+#define MAX_USERNAME_LENGTH 20
+#define MAX_PASSWORD_LENGTH 20
     char username[MAX_USERNAME_LENGTH];
     char password[MAX_PASSWORD_LENGTH];
     // Add more user details as needed

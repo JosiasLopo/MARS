@@ -27,6 +27,21 @@ typedef struct participante
 
 } Participante;
 
+typedef struct participante
+{
+    Utilizador utilizador;
+    int nif;
+    int idade;
+
+}Participante;   
+
+typedef struct inscrito                                                                                                                                                                                                      
+{
+    Participante participante;
+    int numeroDoEvento;
+    Pagamento pagamento
+}Inscrito;
+
 typedef struct pagamento
 {
     int metodoPagamento;
