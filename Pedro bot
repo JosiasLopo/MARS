@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+#define TAM 50
+
+typedef struct pessoa
+{
+    char nome[50];
+    int nif;
+    int idade;
+
+} Pessoa;
+
+
+void my_fgets(char *texto, int n);
+void listarPessoas(Pessoa *pessoa, int n);
+
+
+int main(int argc, char const *argv[])
+{
+    Pessoa p, pessoas[TAM];
+
+    int quantidadePessoas=0;
+    int opcao;
+    int nif, indice;
+    do 
+    {
+        puts("***********MENU***********");
+        puts("1********** Registar Pessoa");
+        puts("2********** Mostrar Pessoa");
+        puts("3********** Login");
+        puts("4********** Dashboard");
+        puts("9********** Sair");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+        switch (opcao)
+        {
+        case 1:
+            criarPessoa(pessoas, quantidadePessoas);// pressica do arreio pessoas, e de um contador de pessoas.
+            break;
+        case 2:
+            printf("Nif: ");
+            scanf("%d", &nif);
+            indice = pesquisaNif(pessoas, quantidadePessoas, nif);// arreio/ contador/ Nif a verificar
+            if (indice <0)
+            {
+                puts ("O Nif QUE PROCURA NAO EXISTE!");
+            }
+            else{
+                mostraFichaPessoa(pessoas [indice]);
+            }
+            break;
+        case 3:
+        
+            break;
+        case 4:
+
+            break;
+        case 9:
+
+            break;
+        default: 
+        puts("Opcao inválida");
+        break;    
+        }
+    }while (opcao !=9);
+
+
+    /*int i = 0;
+    printf("NOME: ");
+    my_fgets(p.nome, 50);
+
+    while (i < TAM && strcasecmp(p.nome, "sair") != 0)
+    {
+        printf("NIF: ");
+        scanf("%d", &p.nif);
+
+        printf("IDADE: ");
+        scanf("%d", &p.idade);
+        fflush(stdin);
+
+        pessoas[i] = p;
+        i++;
+
+        
+        printf("NOME: ");
+        my_fgets(p.nome, 50);
+
+}
+
+void listarPessoas(Pessoa *pessoas, int n){
+    for (int i = 0; i < n; i++)
+    {
+        printf("[%d] - %s : %d anos\n", 
+                            pessoas[i].nif, 
+                            pessoas[i].nome, 
+                            pessoas[i].idade);
+    }
+    
+}
+*/
+}
