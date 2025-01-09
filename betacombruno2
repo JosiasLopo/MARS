@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+
 #define MAX_EVENTOS 100
 #define MAX_TAMANHO_NOME_EVENTO 20
 #define MAX_TAMANHO_NOME 50
@@ -30,7 +32,7 @@ typedef struct utilizador
     char email[MAX_EMAIL];
     char password[MAX_TAMANHO_PASSWORD];
     int idade;
-    int admin;
+    int codAdmin;
 }Utilizador;
 
 typedef struct inscrição                                                                                                                                                                                                 
@@ -44,6 +46,12 @@ typedef struct inscrição
 Evento eventos[MAX_EVENTOS];
 int numEvents = 0;
 
+codigoAdmin( Utilizador utilizadorAtual){
+if (strcmp(codAdmin, utilizadorAtual.codAdmin) == 0) {
+            return 1;
+}
+return 0;
+}
 void registarUtilizador(Utilizador utilizadores[], int *numUtilizadores) {
     
     
@@ -51,21 +59,24 @@ void registarUtilizador(Utilizador utilizadores[], int *numUtilizadores) {
     if (*numUtilizadores >= MAX_UTILIZADORES ) {
         printf("Numero máximo de utilizadores atingido.\n");
         return;
-    }
+    }else{
 
     Utilizador novoUtilizador;
    printf("Insira nome: ");
     scanf("%s", novoUtilizador.nome);
     printf("Insira uma password: ");
     scanf("%s", novoUtilizador.password);
+    printf("Insira o seu email: ");
+    scanf("%s", novoUtilizador.email);
     printf("Insira a idade");
     scanf("%d", novoUtilizador.nome);
     printf("Insira o nif:");
-    scanf("%s", novoUtilizador.nif);
-    novoUtilizador.admin = 0;
+    scanf("%d", novoUtilizador.nif);
+    novoUtilizador.codAdmin = 0;
 
     utilizadores[(*numUtilizadores)++] = novoUtilizador;
     printf("Registration successful.\n");
+    }
 }
 
 int loginUtilizador(Utilizador utilizadores[], int numUtilizadores, Utilizador utilizadorAtual) {
@@ -84,78 +95,114 @@ void criarEvento(Evento eventos[], int *numEventos) {
     if (*numEventos >= MAX_EVENTOS) {
         printf("Numero máximo de eventos atingido.\n");
         return;
-    }
+    }else{
     
     Evento novoEvento;
-    printf("Insira o nomo do evento: ");
+    printf("Insira o nome do evento: ");
     scanf("%s", novoEvento.nomeEv);
     printf("Insira a data do evento: ");
-    scanf("%s", novoEvento.data);
+    scanf("%d", novoEvento.data);
     printf("Insira os detalhes do evento: ");
     scanf("%s", novoEvento.DetalhesEvento);
     printf("Insira o preco que pretende:");
-    scanf("%d", novoEvento.preco);
+    scanf("%f", novoEvento.preco);
    
     eventos[(*numEventos)++] = novoEvento;
-    printf("Evento criado com sucesso.\n");
+    printf("Evento criado com sucesso, com o numero de evento %d.\n", eventos[*numEventos]);
+    }
 }
 
-void editEvent(int eventIndex) {
-    if (eventIndex < 0 || eventIndex >= numEvents) {
-        printf("Invalid event index.\n");
+void editarEvento(int numerodoEvento) {
+    if (numerodoEvento < 0 || numerodoEvento >= numEvents) {
+        printf("Esse evento não existe.\n");
         return;
     }
 
-    printf("Enter new event name: ");
-    scanf("%s", eventos[eventIndex].nomeEv);
-
-    printf("Event edited successfully.\n");
+    printf("Insira o novo nome: ");
+    scanf("%s", eventos[numerodoEvento].nomeEv);
+ printf("Insira a nova data do evento: ");
+    scanf("%s", eventos[numerodoEvento].data);
+    printf("Insira os novos detalhes do evento: ");
+    scanf("%s", eventos[numerodoEvento].DetalhesEvento);
+    printf("Insira o novo preco pretendido:");
+    scanf("%d", eventos[numerodoEvento].preco);
+    printf("Evento editado com sucesso.\n");
 }   
 
-void changeEvent() {
-    int eventIndex;
-    printf("Enter event index: ");
-    scanf("%d", &eventIndex);
+void deleteEvent(Evento eventos[], int *numEventos, int numeroDoEvento) {
+    if (numeroDoEvento < 0 || numeroDoEvento >= *numEventos) {
+        printf("Esse evento nao existe.\n");
+        return;
+    }
 
-    editEvent(eventIndex);
+    for (int i = numeroDoEvento; i < *numEventos - 1; i++) {
+        eventos[i] = eventos[i + 1];
+    }
+    (*numEventos)--;
+    printf("Evento eliminado com sucesso.\n");
+
+}
+
+int pesquisarUtilizadorPorNome(Utilizador utilizadores[], int numUtilizadores, const char *nome) {
+    for (int i = 0; i < numUtilizadores; i++) {
+        if (strcasecmp(utilizadores[i].nome, nome) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int pesquisarEventoPorNome(Evento eventos[], int numEventos, const char *nomeEv) {
+    for (int i = 0; i < numEventos; i++) {
+        if (strcasecmp(eventos[i].nomeEv, nomeEv) == 0) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 int main() {
-    int choice;
+    int escolha;
     int loginuser = -1;
-
+    int numeroDoEvento;
     Utilizador utilizadores[MAX_EVENTOS];
     Evento eventos[MAX_EVENTOS];
     int numUtilizadores = 0;
-    int numEvents = 0;
+    int numEventos = 0;
     Utilizador utilizadorAtual;
-    utilizadorAtual.admin = 0;
+    utilizadorAtual.codAdmin = 0;
   
 
-    while (1) {
-        printf("\n--- Event Organizer Software ---\n");
-        printf("1. Register\n");
+    while (1) {// tirar o 1 
+        printf("\n--- Organizador de eventos MARS ---\n");
+        printf("1. Register\n");//done
         printf("2. Login\n");
-        if (utilizadorAtual.admin)
+        if (utilizadorAtual.codAdmin)
         {
-            printf("3. Create Event\n");
-            printf("4. Edit Event\n");
-            printf("5. Delete Event\n");
-        }
-    
-        printf("6. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
+            printf("3. Criar Evento\n");
+            printf("4. Editar Evento\n");
+            printf("5. Eliminar Evento\n");
+            printf("6. Pagina de estatisticas\n");
+            printf("7. Pagina de avaliações\n");
+            printf("Insira a sua opcção: ");
+        }else{
+        printf("3. Para verificar os eventos");
+        printf("4. Para se inscrever no evento");
+        printf("5. Para se desinscrever no evento");
+        printf("6. Pagina de avaliações");
+        printf("9. Exit\n");
+        printf("Insira a sua opcção: ");
+        scanf("%d", &escolha);
 
-        switch (choice) {
+        switch (escolha) {
             case 1:
            
                 registarUtilizador(utilizadores, &numUtilizadores);
                 break;
             case 2: //meter dados aqui, e pedir em baixo
-               printf("Enter username: ");
+               printf("Insira o nome: ");
                 scanf("%s", utilizadorAtual.nome);
-                printf("Enter password: ");
+                printf("Insira a password: ");
                 scanf("%s", utilizadorAtual.password);
                 loginuser = loginUtilizador(utilizadores, numUtilizadores, utilizadorAtual);
 
@@ -170,23 +217,31 @@ int main() {
                 break;
             case 3:
                 if (loginuser  == -1) {
-                    printf("Please login first.\n");
+                    printf("Porfavor, efetue login primeiro.\n");
                 } else {
-                    if (utilizadorAtual.admin)  criarEvento();
-                }
+                    if (utilizadorAtual.codAdmin) {
+                         criarEvento(eventos, &numEventos);
+                }}
                 break;
             case 4:
                 if (loginuser== -1) {
                     printf("Please login first.\n");
                 } else {
-                    editEvent(loginuser);
+                     if (utilizadorAtual.codAdmin) {
+                        printf("Insira o numero do evento");
+                        scanf("%d", &numeroDoEvento);
+                      editarEvento(numeroDoEvento);
+                }
+                   
                 }
                 break;
             case 5:
                 if (loginuser == -1) {
                     printf("Please login first.\n");
                 } else {
-                    changeEvent();
+                    if(utilizadorAtual.codAdmin){
+                           deleteEvent(eventos, &numEventos, numeroDoEvento);
+                    }
                 }
                 break;
             case 6:
@@ -196,6 +251,6 @@ int main() {
                 printf("Invalid choice.\n");
         }
     }
-
+    }
     return 0;
 }
