@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 #include <string.h>
 
 #define MAX_EVENTOS 100
@@ -8,6 +8,8 @@
 #define MAX_TAMANHO_PASSWORD 20
 #define MAX_UTILIZADORES 50
 #define MAX_EMAIL 50
+#define MAX_NIF 9
+#define MAX_IDADE 3
 
 typedef struct evento {
   char nomeEv[MAX_TAMANHO_NOME];
@@ -24,10 +26,10 @@ typedef struct pagamento {
 
 typedef struct utilizador {
   char nome[MAX_TAMANHO_NOME];
-  int nif;
+  int nif[MAX_NIF];
   char email[MAX_EMAIL];
   char password[MAX_TAMANHO_PASSWORD];
-  int idade;
+  int idade[MAX_IDADE];
   int codAdmin;
 } Utilizador;
 
@@ -71,21 +73,23 @@ int menuStart(int *choice) {
   scanf("%d", choice);
   return *choice;
 }
+void infoVerification(){}
 
-int menuLogin(Utilizador utilizadores[], int numUtilizadores,
-              Utilizador utilizadorAtual) {
+int menuLogin(Utilizador utilizadores[], int numUtilizadores, Utilizador utilizadorAtual, int *MainMenuCounter) {
   printf("Insira o nome: ");
   scanf("%s", utilizadorAtual.nome);
   printf("Insira a password: ");
   scanf("%s", utilizadorAtual.password);
-  for (int i = 0; i < numUtilizadores; i++) {
-    if (strcmp(utilizadores[i].nome, utilizadorAtual.nome) == 0 &&
-        strcmp(utilizadores[i].password, utilizadorAtual.password) == 0) {
-      return i; // manda a localização do utilizador atual no array
+  for (int userCode = 0; userCode < numUtilizadores; userCode++) {
+    if (strcmp(utilizadores[userCode].nome, utilizadorAtual.nome) == 0 &&
+        strcmp(utilizadores[userCode].password, utilizadorAtual.password) == 0) {
+            printf("Login bem sucedido.\n");
+            *MainMenuCounter = 1;
+      return userCode; // manda a localização do utilizador atual no array
     }
   }
-
-  return -1;
+    printf("Palavra-passe ou nome incorretos.\n");
+  return 0;
 }
 
 int menuSignUp(Utilizador utilizadores[], int *numUtilizadores) {
@@ -105,9 +109,12 @@ int menuSignUp(Utilizador utilizadores[], int *numUtilizadores) {
 
   utilizadores[(*numUtilizadores)++] = novoUtilizador;
   printf("Registration successful.\n");
+
+  return 1;
 }
 
 int main() {
+  
   int numeroDoEvento;
   Utilizador utilizadores[MAX_EVENTOS];
   Evento eventos[MAX_EVENTOS];
@@ -117,7 +124,7 @@ int main() {
   utilizadorAtual.codAdmin = 0;
 
   Welcome();
-
+ 
   int login = 0;
   int userLogged = 0;
   int MainMenuCounter = 0;
@@ -125,12 +132,10 @@ int main() {
   int choice = 0;
 
   while (MainMenuCounter == 0) {
-    if (login == 0) {
       menuStart(&choice);
       switch (choice) {
         case 1:
-          menuLogin(utilizadores, numUtilizadores, utilizadorAtual);
-          login = 1;
+          menuLogin(utilizadores, numUtilizadores, utilizadorAtual, &MainMenuCounter);
           break;
         case 2:
           menuSignUp(utilizadores, &numUtilizadores);
@@ -141,7 +146,6 @@ int main() {
         default:
           printf("Escolha invalida\n");
           break;
-      }
     }
   }
 
