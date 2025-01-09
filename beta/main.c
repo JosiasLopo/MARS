@@ -188,65 +188,83 @@ int menuStart(int *choice)
   return *choice;
 }
 
-int menuHomeAdmin()
-{
-  int choice2;
-  Utilizador utilizadorAtual;
+int menuHomeAdmin(Evento eventos[], int *numEventos, int *numeroDoEvento, Utilizador utilizadores[], int *numUtilizadores,Utilizador *utilizadorAtual) {
+  int choice;
 
-  // if (utilizadorAtual.codAdmin) {
-  printf("1. Criar Evento                           1. Para verificar os eventos\n");
-  printf("2. Editar Evento                          2. Para se inscrever no evento\n");
-  printf("3. Eliminar Evento                        3. Para se desinscrever no evento\n");
-  printf("4. Pagina de estatisticas                 4. Pagina de avaliações\n");
+  printf("1. Criar Evento                           6. Para verificar os eventos\n");
+  printf("2. Editar Evento                          7. Para se inscrever no evento\n");
+  printf("3. Eliminar Evento                        8. Para se desinscrever no evento\n");
+  printf("4. Pagina de estatisticas                 9. Pagina de avaliações\n");
   printf("5. Pagina de avaliações                           \n\n");
   printf("10 Sair ->");
   printf("Insira a sua opcção: ");
-  scanf("%d", choice2);
+  scanf("%d", &choice);
 
-  switch (choice2)
-  {
+  switch (choice) {
   case 1:
-    criarEvento(evento, &numEvents);
+    criarEvento(eventos, numEventos);
     break;
   case 2:
+    printf("Insira o número do evento para editar: ");
+    scanf("%d", numeroDoEvento);
+    editarEvento(*numeroDoEvento, numEventos, eventos);
     break;
   case 3:
-    break;
-  case 4:
-    break;
-  case 5:
+    printf("Insira o número do evento para deletar: ");
+    scanf("%d", numeroDoEvento);
+    deleteEvent(eventos, numEventos, *numeroDoEvento);
     break;
   case 10:
+    printf("Saindo do menu administrador.\n");
+    return 0;
+  default:
+    printf("Opção inválida.\n");
     break;
   }
+  return 1;
 }
 
-int menuHomeUser()
-{
+int menuHomeUser(Evento eventos[], int *numEventos, int *numeroDoEvento, Utilizador utilizadores[], int *numUtilizadores, Utilizador *utilizadorAtual) {
   int choice;
-  printf("1. Para verificar os eventos");
-  printf("2. Para se inscrever no evento");
-  printf("3. Para se desinscrever no evento");
-  printf("4. Pagina de avaliações");
-  printf("5. Exit\n");
-  printf("Insira a sua opcção: ");
-  scanf("%d", choice);
 
-  switch (choice)
-  {
+  printf("1. Para verificar os eventos\n");
+  printf("2. Para se inscrever no evento\n");
+  printf("3. Para se desinscrever no evento\n");
+  printf("4. Pagina de avaliações\n");
+  printf("5. Sair\n");
+  printf("Insira a sua opcção: ");
+  scanf("%d", &choice);
+
+  switch (choice) {
   case 1:
+    printf("Eventos disponíveis:\n");
+    for (int i = 0; i < *numEventos; i++) {
+      printf("%d - %s\n", i, eventos[i].nomeEv);
+    }
     break;
   case 2:
+    printf("Insira o número do evento para se inscrever: ");
+    scanf("%d", numeroDoEvento);
+    printf("Inscrição realizada no evento: %s\n",
+           eventos[*numeroDoEvento].nomeEv);
     break;
   case 3:
+    printf("Insira o número do evento para se desinscrever: ");
+    scanf("%d", numeroDoEvento);
+    printf("Desinscrição realizada do evento: %s\n",
+           eventos[*numeroDoEvento].nomeEv);
     break;
   case 4:
+    printf("Página de avaliações (em desenvolvimento).\n");
     break;
   case 5:
-    break;
+    printf("Saindo do menu usuário.\n");
+    return 0;
   default:
+    printf("Opção inválida.\n");
     break;
   }
+  return 1;
 }
 
 /*void infoVerification(Utilizador utilizadores[], int numUtilizadores,
@@ -280,7 +298,6 @@ int main()
   int login = 0;
   int userLogged = 0;
   int MainMenuCounter = 0;
-  int *autorizationLayerPass = 0;
   int choice = 0;
 
   while (MainMenuCounter == 0)
@@ -289,29 +306,26 @@ int main()
     switch (choice)
     {
     case 1:
-      menuLogin(utilizadores, numUtilizadores, utilizadorAtual,
-                &MainMenuCounter);
+      menuLogin(utilizadores, numUtilizadores, utilizadorAtual,&MainMenuCounter);
       break;
     case 2:
       menuSignUp(utilizadores, &numUtilizadores);
       break;
-
     default:
       printf("Escolha invalida\n");
       break;
     }
   }
 
-  while (MainMenuCounter == 1)
-  {
-    Utilizador utilizadorAtual;
-    if (utilizadorAtual.codAdmin)
-    {
-      menuHomeAdmin();
-    }
-    else
-    {
-      menuHomeUser();
+  while (MainMenuCounter == 1) {
+    if (utilizadorAtual.codAdmin) {
+      if (!menuHomeAdmin(eventos, &numEventos, &numeroDoEvento, utilizadores,
+                         &numUtilizadores, &utilizadorAtual))
+        MainMenuCounter = 0;
+    } else {
+      if (!menuHomeUser(eventos, &numEventos, &numeroDoEvento, utilizadores,
+                        &numUtilizadores, &utilizadorAtual))
+        MainMenuCounter = 0;
     }
   }
 }
