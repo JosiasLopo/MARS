@@ -1,5 +1,4 @@
 #include <stdio.h>
-// #include <stdlib.h>
 #include <string.h>
 
 #define MAX_EVENTOS 100
@@ -13,23 +12,20 @@
 #define MAX_DATA 15
 #define MAX_PREÇO 15
 
-typedef struct evento
-{
+typedef struct evento {
   char nomeEv[MAX_TAMANHO_NOME];
   int data[MAX_DATA];
   char DetalhesEvento[150];
   float preco[MAX_PREÇO];
 } Evento;
 
-typedef struct pagamento
-{
+typedef struct pagamento {
   int dataPagamento;
   int metodoPagamento;
   int montante;
 } Pagamento;
 
-typedef struct utilizador
-{
+typedef struct utilizador {
   char nome[MAX_TAMANHO_NOME];
   int nif[MAX_NIF];
   char email[MAX_EMAIL];
@@ -38,26 +34,22 @@ typedef struct utilizador
   int codAdmin;
 } Utilizador;
 
-typedef struct inscrição
-{
+typedef struct inscrição {
   Utilizador utilizador;
   int numeroDoEvento;
   Pagamento pagamento;
 } Inscrição;
 
 int menuLogin(Utilizador utilizadores[], int numUtilizadores,
-              Utilizador utilizadorAtual, int *MainMenuCounter)
-{
+              Utilizador utilizadorAtual, int *MainMenuCounter) {
   printf("Insira o nome: ");
   scanf("%s", utilizadorAtual.nome);
   printf("Insira a password: ");
   scanf("%s", utilizadorAtual.password);
-  for (int userCode = 0; userCode < numUtilizadores; userCode++)
-  {
+  for (int userCode = 0; userCode < numUtilizadores; userCode++) {
     if (strcmp(utilizadores[userCode].nome, utilizadorAtual.nome) == 0 &&
         strcmp(utilizadores[userCode].password, utilizadorAtual.password) ==
-            0)
-    {
+            0) {
       printf("Login bem sucedido.\n");
       *MainMenuCounter = 1;
       return userCode; // manda a localização do utilizador atual no array
@@ -67,8 +59,7 @@ int menuLogin(Utilizador utilizadores[], int numUtilizadores,
   return 0;
 }
 
-int menuSignUp(Utilizador utilizadores[], int *numUtilizadores)
-{
+int menuSignUp(Utilizador utilizadores[], int *numUtilizadores) {
 
   Utilizador novoUtilizador;
   printf("Insira nome: ");
@@ -77,9 +68,9 @@ int menuSignUp(Utilizador utilizadores[], int *numUtilizadores)
   scanf("%s", novoUtilizador.password);
   printf("Insira o seu email: ");
   scanf("%s", novoUtilizador.email);
-  printf("Insira a idade");
+  printf("Insira a idade: ");
   scanf("%d", novoUtilizador.idade);
-  printf("Insira o nif:");
+  printf("Insira o nif: ");
   scanf("%d", novoUtilizador.nif);
 
   novoUtilizador.codAdmin = 0;
@@ -90,60 +81,51 @@ int menuSignUp(Utilizador utilizadores[], int *numUtilizadores)
   return 1;
 }
 
-void criarEvento(Evento eventos[], int *numEventos)
-{
-  if (*numEventos >= MAX_EVENTOS)
-  {
+void criarEvento(Evento eventos[], int *numEventos) {
+  if (*numEventos >= MAX_EVENTOS) {
     printf("Numero máximo de eventos atingido.\n");
     return;
-  }
-  else
-  {
+  } else {
 
     Evento novoEvento;
     printf("Insira o nome do evento: ");
     scanf("%s", novoEvento.nomeEv);
-    printf("Insira a data do evento: ");
+    printf("Insira a data do evento (ddmmaaaa): ");
     scanf("%d", novoEvento.data);
     printf("Insira os detalhes do evento: ");
     scanf("%s", novoEvento.DetalhesEvento);
-    printf("Insira o preco que pretende:");
+    printf("Insira o preco que pretende: ");
     scanf("%f", novoEvento.preco);
-
+    printf("Evento criado com sucesso, com o numero de evento %d.\n", *numEventos  );
     eventos[(*numEventos)++] = novoEvento;
-    printf("Evento criado com sucesso, com o numero de evento %d.\n", *numEventos);
+    
   }
 }
 
-void editarEvento(int numerodoEvento, int *numEventos, Evento eventos[])
-{
-  if (numerodoEvento < 0 || numerodoEvento >= *numEventos)
-  {
+void editarEvento(int numeroDoEvento, int *numEventos, Evento eventos[]) {
+  if (numeroDoEvento < 0 || numeroDoEvento >= *numEventos) {
     printf("Esse evento não existe.\n");
     return;
   }
 
   printf("Insira o novo nome: ");
-  scanf("%s", eventos[numerodoEvento].nomeEv);
+  scanf("%s", eventos[numeroDoEvento].nomeEv);
   printf("Insira a nova data do evento: ");
-  scanf("%c", eventos[numerodoEvento].data);
+  scanf("%d", eventos[numeroDoEvento].data);
   printf("Insira os novos detalhes do evento: ");
-  scanf("%s", eventos[numerodoEvento].DetalhesEvento);
-  printf("Insira o novo preco pretendido:");
-  scanf("%d", eventos[numerodoEvento].preco);
+  scanf("%s", eventos[numeroDoEvento].DetalhesEvento);
+  printf("Insira o novo preco pretendido: ");
+  scanf("%f", &eventos[numeroDoEvento].preco[0]);
   printf("Evento editado com sucesso.\n");
 }
 
-void deleteEvent(Evento eventos[], int *numEventos, int numeroDoEvento)
-{
-  if (numeroDoEvento < 0 || numeroDoEvento >= *numEventos)
-  {
+void deleteEvent(Evento eventos[], int *numEventos, int numeroDoEvento) {
+  if (numeroDoEvento < 0 || numeroDoEvento >= *numEventos) {
     printf("Esse evento nao existe.\n");
     return;
   }
 
-  for (int i = numeroDoEvento; i < *numEventos - 1; i++)
-  {
+  for (int i = numeroDoEvento; i < *numEventos - 1; i++) {
     eventos[i] = eventos[i + 1];
   }
   (*numEventos)--;
@@ -151,49 +133,43 @@ void deleteEvent(Evento eventos[], int *numEventos, int numeroDoEvento)
 }
 
 void pesquisarEventoPorNome(Evento eventos[], int *numEventos, char *nome) {
-  int encontrado = 0; // Flag para verificar se encontramos algum evento
+  int encontrado = 0;
 
-  for (int i = 0; i < *numEventos;
-       i++) { // Desreferencia o ponteiro para obter o número de eventos
-    if (strcmp(eventos[i].nomeEv, nome) ==
-        0) { // Usa strcmp para comparar strings
+  for (int i = 0; i < *numEventos; i++) {
+    if (strcmp(eventos[i].nomeEv, nome) == 0) {
       printf("Evento encontrado:\n");
       printf("Nome do evento: %s\n", eventos[i].nomeEv);
       printf("Data: %d\n", eventos[i].data);
       printf("Detalhes do evento: %s\n", eventos[i].DetalhesEvento);
-      printf("Preço: %.2f\n", eventos[i].preco);
+      printf("Preço: %.2f\n", eventos[i].preco[0]);
       printf("-------------------------\n");
-      encontrado = 1; // Marca como encontrado
+      encontrado = 1;
     }
   }
 
-  if (!encontrado) { // Exibe mensagem apenas se nenhum evento foi encontrado
+  if (!encontrado) {
     printf("Evento com o nome '%s' não encontrado.\n", nome);
   }
 }
 
 void listarEventos(Evento eventos[], int *numEventos) {
-    if (numEventos== 0) {
-        printf("Nenhum utilizador registrado.\n");
-        return;
-    }
+  if (*numEventos == 0) {
+    printf("Nenhum evento registrado.\n");
+    return;
+  }
 
-    printf("Lista de utilizadores:\n");
-    for (int i = 0; i < numEventos; i++) {
-        printf("Utilizador %d:\n", i + 1);
-        printf("Nome do evento: %s\n", eventos[i].nomeEv);
-        printf("Data: %d\n", eventos[i].data);
-        printf("Detalhes dos eventos: %s\n", eventos[i].DetalhesEvento);
-        printf("Preço: %f\n", eventos[i].preco);
- 
-        printf("-------------------------\n");
-    }
+  printf("Lista de eventos:\n");
+  for (int i = 0; i < *numEventos; i++) {
+    printf("Evento %d:\n", i + 1);
+    printf("Nome do evento: %s\n", eventos[i].nomeEv);
+    printf("Data: %d\n", eventos[i].data);
+    printf("Detalhes do evento: %s\n", eventos[i].DetalhesEvento);
+    printf("Preço: %.2f\n", eventos[i].preco[0]);
+    printf("-------------------------\n");
+  }
 }
 
-// fim das estruturas
-
-void Welcome()
-{
+void Welcome() {
   printf("██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗\n");
   printf("██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝\n");
   printf("██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗  \n");
@@ -215,10 +191,8 @@ void Welcome()
   printf("    ╚═══════════════════════════════════════════════╝\n");
   printf("\n");
 }
-// inicialização finalizada
-// inicio das funções
-int menuStart(int *choice)
-{
+
+int menuStart(int *choice) {
   printf("|1 - Login\n");
   printf("|2 - Registar\n");
   printf("|3 - Sair\n");
@@ -227,15 +201,21 @@ int menuStart(int *choice)
   return *choice;
 }
 
-int menuHomeAdmin(Evento eventos[], int *numEventos, int *numeroDoEvento, Utilizador utilizadores[], int *numUtilizadores,Utilizador *utilizadorAtual) {
+int menuHomeAdmin(Evento eventos[], int *numEventos, int *numeroDoEvento,
+                  Utilizador utilizadores[], int *numUtilizadores,
+                  Utilizador *utilizadorAtual) {
   int choice;
-  
 
-  printf("1. Criar Evento                           6. Para Listar os eventos\n");
-  printf("2. Editar Evento                          7. Para verificar os eventos\n");
-  printf("3. Eliminar Evento                        8. Para se inscrever no evento\n");
-  printf("4. Pagina de estatisticas                 9. Para se desinscrever no evento\n");
-  printf("5. Pagina de avaliações                   10. Pagina de avaliações\n\n");
+  printf(
+      "1. Criar Evento                           6. Para Listar os eventos\n");
+  printf("2. Editar Evento                          7. Para verificar os "
+         "eventos\n");
+  printf("3. Eliminar Evento                        8. Para se inscrever no "
+         "evento\n");
+  printf("4. Pagina de estatisticas                 9. Para se desinscrever no "
+         "evento\n");
+  printf(
+      "5. Pagina de avaliações                   10. Pagina de avaliações\n\n");
   printf("0 Sair ->");
   printf("Insira a sua opcção: ");
   scanf("%d", &choice);
@@ -254,43 +234,43 @@ int menuHomeAdmin(Evento eventos[], int *numEventos, int *numeroDoEvento, Utiliz
     scanf("%d", numeroDoEvento);
     deleteEvent(eventos, numEventos, *numeroDoEvento);
     break;
-    case 4:
-      return 0;
+  case 4:
+    return 0;
 
-    case 5:
-      return 0;
+  case 5:
+    return 0;
 
-    case 6:
-      listarEventos(eventos, numEventos);
-      return 0;
+  case 6:
+    listarEventos(eventos, numEventos);
+    return 0;
 
-    case 7: {
-      int indice;
-      printf("Insira o índice do evento que deseja pesquisar (0 a %d): ",
-             *numEventos - 1);
-      scanf("%d", &indice);
+  case 7: {
+    int indice;
+    printf("Insira o índice do evento que deseja pesquisar (0 a %d): ",
+           *numEventos - 1);
+    scanf("%d", &indice);
 
-      if (indice >= 0 && indice < *numEventos) {
-        pesquisarEventoPorNome(eventos, numEventos,
-                               eventos[indice].nomeEv); // Usa nomeEv do struct
-      } else {
-        printf("Índice inválido.\n");
-      }
-      return 0;
+    if (indice >= 0 && indice < *numEventos) {
+      pesquisarEventoPorNome(eventos, numEventos,
+                             eventos[indice].nomeEv); // Usa nomeEv do struct
+    } else {
+      printf("Índice inválido.\n");
     }
+    return 0;
+  }
 
-    case 8:
-      return 0;
+  case 8:
+    return 0;
 
-    case 9:
-      return 0;
+  case 9:
+    return 0;
 
-    case 10:
-      return 0;
+  case 10:
+    return 0;
 
-    case 0:
-      printf("Saindo do menu administrador.\n");
-      return 0;
+  case 0:
+    printf("Saindo do menu administrador.\n");
+    return 0;
 
   default:
     printf("Opção inválida.\n");
@@ -300,7 +280,9 @@ int menuHomeAdmin(Evento eventos[], int *numEventos, int *numeroDoEvento, Utiliz
   return 1;
 }
 
-int menuHomeUser(Evento eventos[], int *numEventos, int *numeroDoEvento, Utilizador utilizadores[], int *numUtilizadores, Utilizador *utilizadorAtual) {
+int menuHomeUser(Evento eventos[], int *numEventos, int *numeroDoEvento,
+                 Utilizador utilizadores[], int *numUtilizadores,
+                 Utilizador *utilizadorAtual) {
   int choice;
 
   printf("1. Para verificar os eventos\n");
@@ -343,23 +325,7 @@ int menuHomeUser(Evento eventos[], int *numEventos, int *numeroDoEvento, Utiliza
   return 1;
 }
 
-/*void infoVerification(Utilizador utilizadores[], int numUtilizadores,
-Utilizador novoUtilizador) { for (int userCode = 0; userCode <
-numUtilizadores; userCode++) { if (strcmp(utilizadores[userCode].nome,
-novoUtilizador.nome) == 0) { printf("O nome que colocou já está a ser
-usado"); return
-    }
-    if ((utilizadores[userCode].nif == novoUtilizador.nif)) {
-      printf("O nif que colocou já está a ser usado");
-    }
-    if (strcmp(utilizadores[userCode].email, novoUtilizador.email) == 0) {
-      printf("O nome que colocou já está a ser usado");
-    }
-  }
-}*/
-
-int main()
-{
+int main() {
 
   int numeroDoEvento;
   Utilizador utilizadores[MAX_EVENTOS];
@@ -376,13 +342,12 @@ int main()
   int MainMenuCounter = 0;
   int choice = 0;
 
-  while (MainMenuCounter == 0)
-  {
+  while (MainMenuCounter == 0) {
     menuStart(&choice);
-    switch (choice)
-    {
+    switch (choice) {
     case 1:
-      menuLogin(utilizadores, numUtilizadores, utilizadorAtual,&MainMenuCounter);
+      menuLogin(utilizadores, numUtilizadores, utilizadorAtual,
+                &MainMenuCounter);
       break;
     case 2:
       menuSignUp(utilizadores, &numUtilizadores);
@@ -404,4 +369,6 @@ int main()
         MainMenuCounter = 0;
     }
   }
+
+  return 0;
 }
