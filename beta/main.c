@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 #include <string.h>
 
 #define MAX_EVENTOS 100
@@ -193,7 +193,7 @@ void pesquisarEventoPorNome(Evento eventos[], int *numEventos, char *nome) {
     if (strcmp(eventos[i].nomeEv, nome) == 0) {
       printf("Evento encontrado:\n");
       printf("Nome do evento: %s\n", eventos[i].nomeEv);
-      printf("Data: %d\n", eventos[i].data);
+      printf("Data: %s\n", eventos[i].data);
       printf("Detalhes do evento: %s\n", eventos[i].DetalhesEvento);
       printf("  Preço: %.2f\n", eventos[i].preco);
       printf("-------------------------\n");
@@ -232,7 +232,7 @@ void inscreverNoEvento(Evento eventos[], int numEventos,
     return;
   }
 
-  listarEventos(eventos, numEventos);
+  listarEventos(eventos, &numEventos);
 
   int numeroDoEvento;
   printf("Insira o número do evento para se inscrever: ");
