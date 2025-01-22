@@ -140,6 +140,8 @@ void criarEvento(Evento eventos[], int *numEventos) {
     return;
   }
 
+  //Q1 - LINHA 155
+
   Evento novoEvento;
   printf("Insira o nome do evento: ");
   scanf(" %[^\n]", novoEvento.nomeEv);
@@ -157,12 +159,18 @@ void criarEvento(Evento eventos[], int *numEventos) {
   printf("Insira o nome do orador: ");
   scanf(" %[^\n]", novoEvento.oradores);
 
-  printf("Insira o preço do evento: ");
-  scanf("%f", &novoEvento.preco);
-  if (novoEvento.preco < 0) {
-    printf("Preço inválido! Operação cancelada.\n");
-    return;
-  }
+  // fgets(novoEvento.oradores, MAX_TAMANHO_NOME, std----);
+  // novoEvento.oradores[strc----(novoEvento.oradores, "\n")] = '\0';
+
+
+  //Q1 - LINHA 172
+  do {
+    printf("Insira o preço do evento: ");
+    scanf("%f", &novoEvento.preco);
+    if (novoEvento.preco < 0) {
+      printf("Preço inválido! Tente novamente.\n");
+    }
+  } while (novoEvento.preco < 0);
 
   printf("Insira o número máximo de inscritos: ");
   scanf("%d", &novoEvento.maxinscritos);
@@ -277,9 +285,25 @@ void listarEventos(Evento eventos[], int *numEventos) {
   }
 }
 
+void adicionarFilaEspera(FilaEspera *fila, Inscricao inscrito) {
+  if (fila->tamanho < MAX_ESPERA) {
+    fila->fila[fila->fim] = inscrito;
+    fila->fim = (fila->fim + 1) % MAX_ESPERA;
+    fila->tamanho++;
+    printf("Inscrito ' %s' adicionado à fila de espera.\n",
+           inscrito.utilizador.nome);
+  } else {
+    printf("Fila de espera cheia! Não é possível adicionar '%s'.\n",
+           inscrito.utilizador.nome);
+  }
+}
+
+//Q2 LINHA 334
+
 void inscreverNoEvento(Evento eventos[], int numEventos,
                        Utilizador utilizadorAtual, Inscricao inscricoes[],
-                       int *numInscricoes) {
+                       int *numInscricoes, FilaEspera *fila,
+                       Inscricao inscrito) {
   if (numEventos == 0) {
     printf("Não há eventos disponíveis para inscrição.\n");
     return;
@@ -296,11 +320,19 @@ void inscreverNoEvento(Evento eventos[], int numEventos,
     return;
   }
 
+  //Q2 - LINHA 334
   Evento *evento = &eventos[numeroDoEvento];
   if (evento->totalinscritos >= evento->maxinscritos) {
-    printf("O evento já atingiu o número máximo de inscritos.\n");
-    return;
+  printf("O evento já atingiu o número máximo de inscritos.\n");
+        
+  FilaEspera filaEspera;
+  // Adicionar à fila de espera
+  adicionarFilaEspera(&filaEspera, inscrito);
+  printf("Você foi adicionado à fila de espera.\n");
+
+  return;
   }
+
   {
     Inscricao novaInscricao;
     novaInscricao.utilizador = utilizadorAtual;
@@ -351,25 +383,14 @@ void listarInscritos(Evento evento, Inscricao inscricoes[], int *numEventos,
   }
 }
 
-void adicionarFilaEspera(FilaEspera *fila, Inscricao inscrito) {
-  if (fila->tamanho < MAX_ESPERA) {
-    fila->fila[fila->fim] = inscrito;
-    fila->fim = (fila->fim + 1) % MAX_ESPERA;
-    fila->tamanho++;
-    printf("Inscrito ' %s' adicionado à fila de espera.\n",
-           inscrito.utilizador.nome);
-  } else {
-    printf("Fila de espera cheia! Não é possível adicionar '%s'.\n",
-           inscrito.utilizador.nome);
-  }
-}
 
-Inscricao removerFilaEspera(FilaEspera *fila) {
-  Inscricao removido;
+//Q2 - LINHA 394 E 411
+int removerFilaEspera(FilaEspera *fila, Inscricao *removido) {
 
+  int booleano;
   if (fila->tamanho > 0) {
     // Remove o elemento na posição 'inicio'
-    removido = fila->fila[fila->inicio];
+    *removido = fila->fila[fila->inicio];
     fila->inicio++; // Avança o índice 'inicio'
     fila->tamanho--;
 
@@ -378,15 +399,15 @@ Inscricao removerFilaEspera(FilaEspera *fila) {
       fila->inicio = 0; // Reseta para 0 se atingir o final
     }
 
-    printf("Inscrito ' %s' removido da fila de espera.\n",
-           removido.utilizador.nome);
+    booleano = 1;
+    return booleano;
   } else {
-    printf("Fila de espera vazia! Nenhum inscrito para remover.\n");
-    memset(&removido, 0, sizeof(removido)); // Retorna um inscrito vazio
+    booleano = 0;
+    return booleano;
   }
-
-  return removido;
 }
+
+
 void desinscreverEventoUsuario(Evento eventos[], int numEventos,
                                Utilizador utilizadorAtual,
                                Inscricao inscricoes[], int *numInscricoes,
@@ -448,7 +469,9 @@ void desinscreverEventoUsuario(Evento eventos[], int numEventos,
 
   // Gerenciar a fila de espera
   if (fila->tamanho > 0) {
-    Inscricao novoInscrito = removerFilaEspera(fila);
+    Inscricao novoInscrito;
+    int res = removerFilaEspera(fila, &novoInscrito);
+
     if (novoInscrito.utilizador.nome[0] !=
         '\0') { // Verifica se a remoção foi válida
       novoInscrito.numEvento = numeroDoEvento;
@@ -481,11 +504,11 @@ void numeroMedioInscritosEventos(Evento eventos[], int *numEventos) {
   printf("O numero médio de inscritos por evento: %.2f\n", media);
 }
 
-void capacidadeMediaEventos(Evento eventos[], int *numEventos) {
+//Q1 - LINHA 529
+float capacidadeMediaEventos(Evento eventos[], int *numEventos, float media) {
 
   if (*numEventos == 0) {
-    printf("Nenhum evento disponível.\n");
-    return;
+    return 0;
   }
 
   int totalCapacidade = 0;
@@ -493,8 +516,9 @@ void capacidadeMediaEventos(Evento eventos[], int *numEventos) {
     totalCapacidade += eventos[i].maxinscritos;
   }
 
-  float media = (float)totalCapacidade / *numEventos;
-  printf("Capacidade média de eventos: %.2f\n", media);
+  media = (float)totalCapacidade / *numEventos;
+  //printf("Capacidade média de eventos: %.2f\n", media);
+  return media;
 }
 
 void eventosComMaiorNumeroInscritos(Evento eventos[], int *numEventos) {
@@ -580,6 +604,7 @@ int menuStart(int *choice) {
 
 int paginaEstatisticas(Evento eventos[], int *numEventos) {
   int choice;
+  float media;
   printf("1. Total de eventos\n");
   printf("2. Número médio de inscritos por evento\n");
   printf("3. Capacidade média de eventos\n");
@@ -598,7 +623,8 @@ int paginaEstatisticas(Evento eventos[], int *numEventos) {
     numeroMedioInscritosEventos(eventos, numEventos);
     break;
   case 3:
-    capacidadeMediaEventos(eventos, numEventos);
+    capacidadeMediaEventos(eventos, numEventos, media);
+    printf("Capacidade média de eventos: %.2f\n", media); //float media
     break;
   case 4:
     eventosComMaiorNumeroInscritos(eventos, numEventos);
@@ -679,7 +705,7 @@ int menuHomeAdmin(Evento eventos[], int *numEventos, int *numeroDoEvento,
 
   case 8:
     inscreverNoEvento(eventos, *numEventos, utilizadorAtual, inscricoes,
-                      numInscricoes);
+                      numInscricoes, fila, inscricoes[*numInscricoes]);
     break;
 
   case 9:
@@ -803,5 +829,3 @@ int main() {
   }
   return 0;
 }
-
-//pode ser fgets inves de scanf
